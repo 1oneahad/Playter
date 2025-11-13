@@ -1,0 +1,16 @@
+# Visual Studio user/workspace files
+.vs/
+
+# Build folders
+Debug/
+Release/
+x64/
+
+# Qt temporary files
+*.pro.user
+*.moc
+*.obj
+*.exe
+*.dll
+*.pdb
+Playter.vcxproj.user
