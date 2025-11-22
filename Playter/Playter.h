@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_Playter.h"
+#include <QFileSystemModel>
 
 class Playter : public QMainWindow
 {
@@ -11,7 +12,10 @@ public:
     Playter(QWidget *parent = nullptr);
     ~Playter();
 
+private slots:
 private:
     Ui::PlayterClass ui;
+    QFileSystemModel* model;
 };
+
 
