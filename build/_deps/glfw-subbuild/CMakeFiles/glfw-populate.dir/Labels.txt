@@ -1,0 +1,14 @@
+# Target labels
+ glfw-populate
+# Source files and their labels
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/glfw-populate
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/993e95aeb09c71740fb72778b52fc2ee/glfw-populate.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/bf551dc91f0948e0821dae1e65147d3a/glfw-populate-complete.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-build.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-configure.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-download.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-install.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-mkdir.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-patch.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-test.rule
+C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/CMakeFiles/7483a1b3d4aa95688ea0e2454e97f0fe/glfw-populate-update.rule

@@ -1,0 +1,10 @@
+^C:\USERS\JC\ONEDRIVE\DESKTOP\PLAYTER\BUILD\CMAKEFILES\CD16ABC94A0A5E97E406829A892EEC24\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/JC/OneDrive/Desktop/Playter -BC:/Users/JC/OneDrive/Desktop/Playter/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/JC/OneDrive/Desktop/Playter/build/Playter.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

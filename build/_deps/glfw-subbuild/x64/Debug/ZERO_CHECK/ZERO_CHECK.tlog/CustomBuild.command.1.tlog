@@ -1,0 +1,10 @@
+^C:\USERS\JC\ONEDRIVE\DESKTOP\PLAYTER\BUILD\_DEPS\GLFW-SUBBUILD\CMAKEFILES\993E95AEB09C71740FB72778B52FC2EE\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild -BC:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/JC/OneDrive/Desktop/Playter/build/_deps/glfw-subbuild/glfw-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

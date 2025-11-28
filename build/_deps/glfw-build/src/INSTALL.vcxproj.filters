@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\JC\OneDrive\Desktop\Playter\build\CMakeFiles\b7283bfcb9821330fab896df2c3d4ca0\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{ACF0210A-9935-386C-95BA-EA180C95E487}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
