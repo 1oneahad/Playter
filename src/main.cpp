@@ -3,7 +3,11 @@
 #include "backends/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
-
+#include <windows.h>
+#include <commdlg.h>  // For GetOpenFileName
+#include <string>
+#include <iostream>
+using namespace std;
 
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"
@@ -15,11 +19,39 @@ struct Song {
 
 ma_engine engine;
 
+// Select FILE and RETURN File Path (GPT Generated)
+std::string OpenFileDialog() {
+    OPENFILENAME ofn;       // common dialog box structure
+    char szFile[260] = { 0 }; // buffer for file name
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL; // or your window handle
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = "MP3 Files\0*.mp3\0All Files\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileName(&ofn) == TRUE) {
+        return std::string(szFile);
+    }
+    return ""; // user canceled
+}
+
+
 int main() {
-    
+    float volume = 0.5f;
+    bool muted = false; //Volume Slider stuff (dummy)
+    std::string filepath = "Nothing"; //to be used with ADD SONG button
+    int winWidth, winHeight;
     if (!glfwInit()) return 1;
+
     
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Playter - MP3 Player", NULL, NULL);
+    
+
+    
+    GLFWwindow* window = glfwCreateWindow(600, 400, "Playter - MP3 Player", NULL, NULL);
     if (window == NULL) return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
@@ -45,10 +77,16 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        {
-            ImGui::Begin("Playter Control Panel");
+        {   
+            glfwGetWindowSize(window, &winWidth, &winHeight);
+            ImGui::SetNextWindowPos(ImVec2(0, 0));
+            ImGui::SetNextWindowSize(ImVec2((float)winWidth, (float)winHeight)); 
+            //get window size and the following line sets the subwindow size accordingly
+            ImGui::Begin("Playter Control Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
             
-            ImGui::Text("Now Playing: Nothing");
+            ImGui::Text("Now Playing:");
+            ImGui::SameLine();
+            ImGui::Text(filepath.c_str());
 
             ImGui::NewLine();
             
@@ -57,6 +95,8 @@ int main() {
             ImGui::NewLine();
             
             if (ImGui::Button("Play")) {
+                ma_engine_play_sound(&engine, filepath.c_str(), NULL); 
+                //Multiple times play hota if you repeatedly press play
             }
             ImGui::SameLine();
             if (ImGui::Button("Pause")) {
@@ -64,8 +104,22 @@ int main() {
             ImGui::SameLine();
             if (ImGui::Button("Next")) {
             }
+            ImGui::SameLine();
+            if (ImGui::Button("Add Song")) {
+                filepath = OpenFileDialog(); //Brings Filepath
+                if (!filepath.empty()) {
+                    std::cout << "User selected: " << filepath << std::endl; //terminal
+                }
+            }
 
             ImGui::NewLine();
+
+            ImGui::Separator();
+            
+            ImGui::NewLine();
+
+            ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f);
+            ImGui::Checkbox("Mute", &muted);
 
             ImGui::Separator();
             
