@@ -36,7 +36,7 @@ include_directories(
 # Define Executable
 add_executable(Playter
     src/main.cpp
-    rc/Playter.cpp 
+    src/Playter.cpp 
     ${IMGUI_SOURCES}
 )
 
