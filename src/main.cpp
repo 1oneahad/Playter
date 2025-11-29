@@ -9,6 +9,8 @@
 #include <iostream>
 
 #include "LinkedList.h"
+#include "Stack.h"
+#include "HashMap.h"
 
 using namespace std;
 
@@ -18,6 +20,8 @@ using namespace std;
 
 ma_engine engine;
 Playlist myPlaylist; 
+HistoryStack myHistory; // our Stack for played songs
+SongMap mySearchMap; // our HashMap for searching songs by title
 Node* currentlyPlaying = nullptr;
 
 static ma_sound sound;
@@ -85,14 +89,22 @@ void AddSong() {
     if (ImGui::Button(" + Add Song ")) {
         std::string path = OpenFileDialog();
         if (!path.empty()) {
-            // I extracted the filename to use as a "Title" 
             std::string title = GetFilenameFromPath(path);
+            
+            myPlaylist.addSong(title.c_str(), "Unknown", path.c_str());
 
-            // I passed 3 arguments to satisfy the LinkedList:
-            // 1. Title, 2. A Dummy Artist, 3. The Path
-            myPlaylist.addSong(title.c_str(), "Unknown Artist", path.c_str());
-            cout << "Added node for: " << path << endl;
+            Node* temp = myPlaylist.head;
+            while(temp->next != nullptr) {
+                temp = temp->next;
+            }
 
+            mySearchMap.insert(title.c_str(), temp);
+            
+            currentlyPlaying = temp; 
+            
+            LoadSound(currentlyPlaying->data.filePath); 
+            
+            cout << "Indexed and Selected: " << title << endl;
         }
     }
 }
@@ -104,7 +116,7 @@ void UI_PreReq() {
 
 void Diplay_CurrentlyPlaying() {
     if (currentlyPlaying != nullptr) {
-        ImGui::Text(currentlyPlaying->data.title); // show name from node
+        ImGui::Text(currentlyPlaying->data.title);
     }
     else {
         ImGui::Text("Nothing");
@@ -112,9 +124,18 @@ void Diplay_CurrentlyPlaying() {
 }
 
 void Previous_Button() {
+    if (myHistory.isEmpty()) ImGui::BeginDisabled();
+    
     if (ImGui::Button("Previous")) {
-        // stack for history will go here (pop on finished track)
+        Node* prevNode = myHistory.pop(); // popping last played song from stack
+        if (prevNode != nullptr) {
+            currentlyPlaying = prevNode; // set currently playing to popped song
+            LoadSound(currentlyPlaying->data.filePath);
+            Play(); // playing the previous track which was now moved into currentlyPlaying
+        }
     }
+    
+    if (myHistory.isEmpty()) ImGui::EndDisabled();
 }
 
 void Play_Button() {
@@ -132,15 +153,13 @@ void Pause_Button() {
 
 void Next_Button() {
     if (ImGui::Button("Next")) {
-        // linked list travesal to go next
         if (currentlyPlaying != nullptr && currentlyPlaying->next != nullptr) {
-            //TODO:
-            // Copy To Stack
-            // Delete From currentlyPlaying
+            
+            myHistory.push(currentlyPlaying); // pushing current song to history stack before moving to next
             
             currentlyPlaying = currentlyPlaying->next;
             LoadSound(currentlyPlaying->data.filePath);
-            Play(); // Play Next Track
+            Play();
         }
     }
 }
@@ -149,13 +168,10 @@ void Set_Volume() {
     ImGui::Checkbox("##Mute", &muted);
     ImGui::SameLine();
 
-    // Use int for the slider
-    static int intVolume = 100; // 0-100
+    static int intVolume = 100;
     if (ImGui::SliderInt("Volume", &intVolume, 0, 100)) {
-        // do nothing here, handled below
     }
 
-    // Apply to miniaudio engine
     float scaledVolume = muted ? 0.0f : (float)intVolume / 100.0f;
     ma_engine_set_volume(&engine, scaledVolume);
 }
@@ -164,26 +180,24 @@ void Set_Volume() {
 void Queue() {
     ImGui::Text("Playlist Queue (Linked List Content):");
 
-    ImGui::BeginChild("ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_HorizontalScrollbar); // scrolling region for playlist
+    ImGui::BeginChild("ScrollingRegion", ImVec2(0, 200), true, ImGuiWindowFlags_HorizontalScrollbar);
 
-    // POINTER TRAVERSAL
     Node* temp = myPlaylist.head;
     int i = 1;
     while (temp != nullptr) {
         std::string label = std::to_string(i) + ". " + temp->data.title;
 
-        // change currentplaying item to be the selected (clicked) one
         if (ImGui::Selectable(label.c_str(), currentlyPlaying == temp)) {
             currentlyPlaying = temp;
             LoadSound(currentlyPlaying->data.filePath);
         }
 
-        temp = temp->next; // moving pointer to next node
+        temp = temp->next;
         i++;
     }
 }
 
-// Converts seconds → mm:ss format
+
 std::string FormatTime(int seconds) {
     int minutes = seconds / 60;
     int sec = seconds % 60;
@@ -206,7 +220,6 @@ void Timeline_Slider() {
     int currentSec = (int)(cursorFrames / sampleRate);
     int totalSec = (int)(totalFrames / sampleRate);
 
-    // Slider using integers
     float sliderValue = (float)currentSec;
     if (ImGui::SliderFloat("##Timeline", &sliderValue, 0.0f, totalSec, "")) {
         int newFrame = (int)(sliderValue * sampleRate);
@@ -214,14 +227,31 @@ void Timeline_Slider() {
     }
 
     ImGui::SameLine();
-    // Show mm:ss display
     ImGui::Text("%s / %s",
         FormatTime(currentSec).c_str(),
         FormatTime(totalSec).c_str()
     );
 }
 
-
+// Searching songs by title using HashMap
+void Search_UI() {
+    static char searchBuffer[128] = "";
+    ImGui::InputText("Search", searchBuffer, 128);
+    ImGui::SameLine();
+    
+    if (ImGui::Button("Go")) {
+        
+        Node* result = mySearchMap.search(searchBuffer);
+        if (result != nullptr) {
+            currentlyPlaying = result;
+            LoadSound(currentlyPlaying->data.filePath);
+            Play();
+            
+        } else {
+            cout << "Song not found!" << endl;
+        }
+    }
+}
 
 int run() {
     
@@ -231,7 +261,7 @@ int run() {
 
 
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Playter - MP3 Player", NULL, NULL); // changed size to be bigger
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Playter - MP3 Player", NULL, NULL);
     if (window == NULL) return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
@@ -273,12 +303,10 @@ int run() {
 
             ImGui::NewLine();
 
-            // CONTROLS
             Previous_Button();
 
             ImGui::SameLine();
 
-            // play only when there is a song selected (FIXED)
             Play_Button();
 
             ImGui::SameLine();
@@ -304,8 +332,9 @@ int run() {
             ImGui::Separator();
 
             ImGui::NewLine();
+            
+            Search_UI();
 
-            // LIST VISUALIZATON
             Queue();
 
             ImGui::EndChild();
