@@ -220,17 +220,23 @@ void Timeline_Slider() {
     int currentSec = (int)(cursorFrames / sampleRate);
     int totalSec = (int)(totalFrames / sampleRate);
 
-    float sliderValue = (float)currentSec;
-    if (ImGui::SliderFloat("##Timeline", &sliderValue, 0.0f, totalSec, "")) {
-        int newFrame = (int)(sliderValue * sampleRate);
+    char progressOverlay[32];
+    snprintf(progressOverlay, 32, "%s / %s", FormatTime((int)currentSec).c_str(), FormatTime((int)totalSec).c_str());
+
+    float fraction = currentSec / totalSec;
+    
+    ImGui::SetNextItemAllowOverlap();
+    ImGui::ProgressBar(fraction, ImVec2(-1, 0), progressOverlay);
+
+    ImGui::SetCursorPos(ImGui::GetItemRectMin());
+    
+    float dragValue = currentSec;
+    
+    
+    if (ImGui::SliderFloat("##Time", &dragValue, 0.0f, totalSec, "")) {
+        int newFrame = (int)(dragValue * sampleRate);
         ma_sound_seek_to_pcm_frame(&sound, newFrame);
     }
-
-    ImGui::SameLine();
-    ImGui::Text("%s / %s",
-        FormatTime(currentSec).c_str(),
-        FormatTime(totalSec).c_str()
-    );
 }
 
 // Searching songs by title using HashMap
