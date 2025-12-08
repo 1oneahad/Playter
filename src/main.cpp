@@ -123,20 +123,26 @@ void Diplay_CurrentlyPlaying() {
     }
 }
 
-void Previous_Button() {
-    if (myHistory.isEmpty()) ImGui::BeginDisabled();
-    
+void Previous_Button()
+{
+    bool disable = myHistory.isEmpty();
+    if (disable)
+        ImGui::BeginDisabled();
+
     if (ImGui::Button("Previous")) {
-        Node* prevNode = myHistory.pop(); // popping last played song from stack
-        if (prevNode != nullptr) {
-            currentlyPlaying = prevNode; // set currently playing to popped song
+        // Only executed when history has items
+        Node* prevNode = myHistory.pop();
+        if (prevNode) {
+            currentlyPlaying = prevNode;
             LoadSound(currentlyPlaying->data.filePath);
-            Play(); // playing the previous track which was now moved into currentlyPlaying
+            Play();
         }
     }
-    
-    if (myHistory.isEmpty()) ImGui::EndDisabled();
+
+    if (disable)
+        ImGui::EndDisabled();
 }
+
 
 void Play_Button() {
     if (ImGui::Button("Play")) {
