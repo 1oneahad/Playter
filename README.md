@@ -1,10 +1,3 @@
-# Playter
-
-| ID | Name |
-|:---|:----------------------|
-| K24-2510 | Ahad |
-| K24-2561 | Aayan Hassan |
-
 ## Introduction
 Playter is a lightweight MP3 player simulation built using **C++** with the **Qt framework** for its graphical interface. The project focuses on managing and playing songs efficiently through the use of fundamental data structures. It aims to handle song addition, removal, searching, and playlist organization while supporting basic playback controls like play, pause, next, and previous. The emphasis will remain on the internal data handling and logic rather than complex audio processing.
 
